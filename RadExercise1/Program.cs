@@ -14,7 +14,7 @@ namespace RadExercise1
             {
                 foreach(Club c in db.Clubs )
                 {
-                    Console.WriteLine(c.Info);
+                    Console.WriteLine(c.Info + ".");
                 }
                 Console.ReadKey();
             }
