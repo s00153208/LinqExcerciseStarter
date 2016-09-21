@@ -27,6 +27,7 @@ namespace RadExercise1
     // Implement IDisposable to allow using 
     class TestDbContext : IDisposable
     {
+        static Random rng = new Random();
         private bool disposed = false;
         public List<Student> Students = new List<Student>();
         // Create a set of Clubs
@@ -54,45 +55,54 @@ namespace RadExercise1
             .First().playerid;                      // take the first record and grab th eplayerid Guid field value
             return result;
         }
+
         private void seedClubs()
         {
+
+            Clubs = new List<Club>();
+
+            List<string> ClubNames = new List<string>() { "ITS FC", "ITS GAA", "The Chess Club" };
+
             // Create a list of clubs and populate it test data
-            Clubs = new List<Club>()
-            // Club collection
+
+
+            foreach(string name in ClubNames) // loop through the club names
             {
-                // First club record 
-                new Club {
-                id = Guid.NewGuid(),
-                ClubName = "ITS FC",
-                // Select a random student
-                adminID = GetRandomAdmin(),
-                 ClubEvents = new List<ClubEvent>(),
-                 ClubMembers = new List<Member>(),
-                   CreationDate = DateTime.Now
-                    },
-                // Second Club record
-                new Club {
-                id = Guid.NewGuid(),
-                ClubName = "ITS GAA ",
-                // Select a random student
-                adminID = GetRandomAdmin(),
-                 ClubEvents = new List<ClubEvent>(),
-                 ClubMembers = new List<Member>(),
-                   CreationDate = DateTime.Now
-                    },
-                // Third Club record
-                new Club {
-                id = Guid.NewGuid(),
-                ClubName = "The Chess Club ",
-                // Select a random student
-                adminID = GetRandomAdmin(),
-                 ClubEvents = new List<ClubEvent>(),
-                 ClubMembers = new List<Member>(),
-                   CreationDate = DateTime.Now
-                    },
+                Club club = new Club();
 
-            };
+                club.id = Guid.NewGuid();
+                club.ClubName = name;
+                club.adminID = GetRandomAdmin();
+                club.ClubEvents = new List<ClubEvent>();
+                club.ClubMembers = new List<Member>();
+                club.CreationDate = DateTime.Now;
+                club.ClubEvents = CreateEvents(); // create random events with random values
 
+                Clubs.Add(club); // add to the list
+            }
+
+        }
+
+        private List<ClubEvent> CreateEvents()
+        {
+            List<ClubEvent> events = new List<ClubEvent>();
+            int numEvents = rng.Next(0, 6);
+
+            for (var i = 0; i < numEvents; i++)
+            {
+                int randomDate = rng.Next(1, 181); // create a random number of days to add to the current date
+                DateTime dateStart = DateTime.Now.AddDays(randomDate);
+                int randomDateEnd = rng.Next(1, 11); // random number of days added to the start date
+                DateTime dateEnd = dateStart.AddDays(randomDateEnd);
+
+                ClubEvent evt = new ClubEvent();
+                evt.attendees = new List<Member>(); // add an empty member
+                evt.StartDateTime = dateStart;
+                evt.EndDateTime = dateEnd;
+                events.Add(evt);
+            }
+
+            return events;
         }
 
         public void Dispose()
